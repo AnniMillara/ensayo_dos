@@ -95,19 +95,15 @@ class Prioridades:
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
-    def buscar_email(cls, nombre):
+    def buscar_nombre(cls, nombre):
         query = """
             SELECT
-                id_tarea,
+                id_prioridad,
                 nombre,
                 descripcion,
-                categoria_id,
-                prioridad_id,
-                estado_id,
-                usuario_id,
                 created_at,
                 updated_at
-            FROM tareas
+            FROM prioridades
             WHERE nombre = %(nombre)s;
         """
         data = {

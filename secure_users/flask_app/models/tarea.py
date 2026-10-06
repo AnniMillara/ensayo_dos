@@ -119,7 +119,7 @@ class Tareas:
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
-    def buscar_email(cls, nombre):
+    def buscar_nombre(cls, nombre):
         query = """
             SELECT
                 id_tarea,
