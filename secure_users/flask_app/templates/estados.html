@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}TaskTrack - Estados{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <div>
+        <h2>Estados</h2>
+        <p>Estados de tareas disponibles.</p>
+    </div>
+</div>
+
+<div class="card-bookhub mb-4">
+    <h3 style="margin-top:0; font-size: 1.05rem;">Agregar Estado</h3>
+    <form action="{{ url_for('nuevo_estado') }}" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
+        <input type="text" name="nombre" class="form-control" placeholder="Nombre del estado" required style="flex:1; min-width:200px;">
+        <button type="submit" class="btn btn-dark">+ Agregar</button>
+    </form>
+</div>
+
+<div class="list-grid">
+    {% for estado in lista_estado %}
+    <div class="list-card">
+        <span class="name">{{ estado.nombre }}</span>
+        <div class="actions">
+            <a href="{{ url_for('eliminar_estado', id=estado.id_estado) }}" class="btn btn-sm btn-danger">Borrar</a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

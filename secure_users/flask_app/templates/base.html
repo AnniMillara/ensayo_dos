@@ -4,10 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}BookHub{% endblock %}</title>
+    <title>{% block title %}TaskTrack{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
@@ -15,15 +16,16 @@
 
     <div class="container" style="padding: 24px 16px;">
 
-        {# ---------- NAVBAR COMÚN ---------- #}
+        {# ---------- NAVBAR ---------- #}
         {% if session.get('id_usuario') %}
         <nav class="navbar-bookhub">
-            <a href="{{ url_for('inicio_libros') }}" class="brand">📖 BookHub</a>
+            <a href="{{ url_for('tareas') }}" class="brand"><i class="fa fa-check-square-o" aria-hidden="true"></i>
+                TaskTrack</a>
             <div class="nav-links">
-                <a href="{{ url_for('inicio_libros') }}">Mis Libros</a>
-                <a href="{{ url_for('autores') }}">Autores</a>
-                <a href="{{ url_for('generos') }}">Géneros</a>
-                <a href="{{ url_for('mis_favoritos') }}">Mis Favoritos</a>
+                <a href="{{ url_for('tareas') }}">Mis Tareas</a>
+                <a href="{{ url_for('lista_categorias') }}">Categorías</a>
+                <a href="{{ url_for('lista_estado') }}">Estados</a>
+                <a href="{{ url_for('lista_prioridad') }}">Prioridades</a>
                 <a href="{{ url_for('ruta_perfil', id=session['id_usuario']) }}">Mi Perfil</a>
                 <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
             </div>

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}TaskTrack - Login / Registro{% endblock %}
+
+{% block content %}
+<div class="login-header">
+    <h1><i class="fa fa-check-square-o" aria-hidden="true"></i>
+        TaskTrack</h1>
+    <p>Tus tareas desde un lugar crecano!!</p>
+</div>
+
+<div class="grid-2">
+    <!-- Crear Cuenta -->
+    <div class="login-card">
+        <h3>Crear Cuenta</h3>
+        <form action="{{ url_for('registro') }}" method="POST">
+            <div class="mb-3">
+                <label>Nombre</label>
+                <input type="text" name="nombre" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Apellido</label>
+                <input type="text" name="apellido" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>E-mail</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Confirmar Contraseña</label>
+                <input type="password" name="confirmar_contrasena" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-dark w-100">Registrarse</button>
+        </form>
+    </div>
+
+    <!-- Iniciar Sesión -->
+    <div class="login-card">
+        <h3>Iniciar Sesión</h3>
+        <form action="{{ url_for('login') }}" method="POST">
+            <div class="mb-3">
+                <label>E-mail</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label>Contraseña</label>
+                <input type="password" name="contrasena" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-dark w-100">Iniciar Sesión</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

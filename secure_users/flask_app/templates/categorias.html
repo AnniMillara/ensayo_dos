@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}TaskTrack - Categorias{% endblock %}
+
+{% block content %}
+
+{% if lista_categorias %}
+<table>
+    <th>
+    <td>Nombre</td>
+    <td>Descripción</td>
+    </th>
+    {% for categoria in lista_categorias %}
+    <td>{{ categoria.nombre }}</td>
+    <td>{{ categoria.descripcion }}</td>
+    {% endfor %}
+</table>
+{% else %}
+<div>Uy, parece que no hay categorias registradas :(, ¡Ingresa una!</div>
+{% endblock %}

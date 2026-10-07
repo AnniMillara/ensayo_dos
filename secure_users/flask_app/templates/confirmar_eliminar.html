@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}TaskTrack - Confirmar eliminación{% endblock %}
+
+{% block content %}
+
+<div class="confirm-box">
+    <h3>⚠️ Confirmar eliminación</h3>
+    <p>{{ mensaje }}</p>
+
+    <div class="confirm-actions">
+        <a href="{{ accion }}" class="btn btn-danger">Sí, eliminar</a>
+        <a href="{{ cancelar }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</div>
+
+{% endblock %}

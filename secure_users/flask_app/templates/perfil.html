@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}TaskTrack - Mi Perfil{% endblock %}
+
+{% block content %}
+
+<div class="profile-header">
+    <div class="profile-avatar">{{ usuario.nombre[0]|upper }}</div>
+    <div class="profile-info">
+        <h2>{{ usuario.nombre }} {{ usuario.apellido }}</h2>
+        <p>{{ usuario.email }}</p>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <h2>Mis Tareas</h2>
+        <p>Traeas que debes completar.</p>
+    </div>
+</div>
+
+{% if tareas %}
+<table class="table-bookhub">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Categoria</th>
+            <th>Prioridad</th>
+            <th>Fecha-Limite</th>
+            <th>Estado</th>
+            <th>Acción</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tarea in lista_tareas %}
+        <tr>
+            <td>
+                <a href="{{ url_for('detalle_tarea', id=tarea.id_tarea) }}">{{ tarea.nombre }}</a>
+            </td>
+            <td>{{ tarea.categoria }}</td>
+            <td>{{ tarea.prioridad }}</td>
+            <td>{{ tarea.fecha_limite.strftime('%Y-%m-%d') }}</td>
+            <td>{{ tarea.estado }}</td>
+            <td>
+                <a href="{{ url_for('detalle_tarea', libro_id=tarea.id_tarea) }}" class="btn btn-sm">
+                    Ver
+                </a>
+                <a href="{{ url_for('modificar_tarea', libro_id=tarea.id_tarea) }}" class="btn btn-sm">
+                    Editar
+                </a>
+                <a href="{{ url_for('eliminar_tarea', libro_id=tarea.id_tarea) }}" class="btn btn-sm btn-danger">
+                    Quitar
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="card-bookhub text-center">
+    <p class="text-muted">Aún no hay tareas guardadas.</p>
+</div>
+{% endif %}
+
+<div class="mt-5">
+    <a href="{{ url_for('confirmar_eliminar', id=usuario.id_usuario) }}" class="btn btn-danger">
+        Eliminar mi cuenta
+    </a>
+</div>
+
+{% endblock %}
