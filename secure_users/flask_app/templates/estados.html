@@ -16,6 +16,7 @@
         <tr>
             <th>Nombre</th>
             <th>Descripción</th>
+            <th>Color</th>
             <th>Acciones</th>
         </tr>
     </thead>
@@ -24,6 +25,12 @@
         <tr>
             <td>{{ e.nombre }}</td>
             <td>{{ e.descripcion }}</td>
+            <td>
+                <span class="badge-estado"
+                    style="background: {{ e.color }}22; color: {{ e.color }}; border: 1px solid {{ e.color }}55;">
+                    {{ e.nombre }}
+                </span>
+            </td>
             <td>
                 <a href="{{ url_for('editar_estado', id=e.id_estado) }}" class="btn btn-sm btn-dark">Editar</a>
                 <form action="{{ url_for('estado_eliminar', id=e.id_estado) }}" method="POST" style="display:inline;"

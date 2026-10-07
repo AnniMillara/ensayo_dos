@@ -3,9 +3,9 @@ CREATE DATABASE esquema_tareas;
 USE esquema_tareas;
 
 CREATE TABLE usuarios(
-	id_usuario INT PRIMARY KEY AUTO_INCREMENT,
-	nombre     VARCHAR(60) NOT NULL,
-	apellido   VARCHAR(200) NOT NULL,
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    nombre     VARCHAR(60) NOT NULL,
+    apellido   VARCHAR(200) NOT NULL,
     email      VARCHAR(200) NOT NULL UNIQUE,
     contrasena VARCHAR(225) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -13,34 +13,35 @@ CREATE TABLE usuarios(
 );
 
 CREATE TABLE categorias(
-	id_categoria INT PRIMARY KEY AUTO_INCREMENT,
-	nombre       VARCHAR(60) NOT NULL,
+    id_categoria INT PRIMARY KEY AUTO_INCREMENT,
+    nombre       VARCHAR(60) NOT NULL,
     descripcion  VARCHAR(225) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE prioridades(
-	id_prioridad INT PRIMARY KEY AUTO_INCREMENT,
-	nombre       VARCHAR(60) NOT NULL,
+    id_prioridad INT PRIMARY KEY AUTO_INCREMENT,
+    nombre       VARCHAR(60) NOT NULL,
     descripcion  VARCHAR(225) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE estados(
-	id_estado INT PRIMARY KEY AUTO_INCREMENT,
-	nombre       VARCHAR(60) NOT NULL,
+    id_estado INT PRIMARY KEY AUTO_INCREMENT,
+    nombre       VARCHAR(60) NOT NULL,
     descripcion  VARCHAR(225) NOT NULL,
+    color        VARCHAR(20) NOT NULL DEFAULT '#6b7280',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE tareas(
-	id_tarea     INT PRIMARY KEY AUTO_INCREMENT,
-	nombre       VARCHAR(60) NOT NULL,
+    id_tarea     INT PRIMARY KEY AUTO_INCREMENT,
+    nombre       VARCHAR(60) NOT NULL,
     descripcion  VARCHAR(225) NOT NULL,
-    -- llaves
+    fecha_limite DATE NOT NULL,
     categoria_id INT NOT NULL,
     FOREIGN KEY (categoria_id) REFERENCES categorias(id_categoria)
         ON DELETE CASCADE ON UPDATE CASCADE,
@@ -50,7 +51,7 @@ CREATE TABLE tareas(
     estado_id INT NOT NULL,
     FOREIGN KEY (estado_id) REFERENCES estados(id_estado)
         ON DELETE CASCADE ON UPDATE CASCADE,
-	usuario_id INT NOT NULL,
+    usuario_id INT NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)
         ON DELETE CASCADE ON UPDATE CASCADE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -58,12 +59,12 @@ CREATE TABLE tareas(
 );
 
 CREATE TABLE IF NOT EXISTS comentarios(
-	id_comentario INT PRIMARY KEY AUTO_INCREMENT,
+    id_comentario INT PRIMARY KEY AUTO_INCREMENT,
     contenido VARCHAR(250) NOT NULL,
     usuario_id INT NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuarios(id_usuario)
         ON DELETE CASCADE ON UPDATE CASCADE,
-	tarea_id INT NOT NULL,
+    tarea_id INT NOT NULL,
     FOREIGN KEY (tarea_id) REFERENCES tareas(id_tarea)
         ON DELETE CASCADE ON UPDATE CASCADE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

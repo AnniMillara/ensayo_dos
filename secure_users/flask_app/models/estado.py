@@ -1,43 +1,33 @@
 from flask import flash
 from flask_app.config.mysqlconnection import connectToMySQL
 
+
 class Estados:
     def __init__(self, data):
         self.id_estado = data["id_estado"]
         self.nombre = data["nombre"]
         self.descripcion = data["descripcion"]
+        self.color = data["color"]
         self.created_at = data["created_at"]
         self.updated_at = data["updated_at"]
 
     @classmethod
     def visualizar_todos(cls):
         query = """
-            SELECT 
-                id_estado,
-                nombre,
-                descripcion,
-                created_at,
-                updated_at
+            SELECT id_estado, nombre, descripcion, color, created_at, updated_at
             FROM estados
             ORDER BY id_estado;
         """
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-
         estados = []
         for estado in resultados:
             estados.append(cls(estado))
-
         return estados
 
     @classmethod
     def buscar_id(cls, id):
         query = """
-            SELECT 
-                id_estado,
-                nombre,
-                descripcion,
-                created_at,
-                updated_at
+            SELECT id_estado, nombre, descripcion, color, created_at, updated_at
             FROM estados
             WHERE id_estado = %(id_estado)s;
         """
@@ -54,6 +44,7 @@ class Estados:
             SET
                 nombre = %(nombre)s,
                 descripcion = %(descripcion)s,
+                color = %(color)s,
                 updated_at = NOW()
             WHERE id_estado = %(id_estado)s;
         """
@@ -74,11 +65,13 @@ class Estados:
             INSERT INTO estados(
                 nombre,
                 descripcion,
+                color,
                 created_at,
                 updated_at
             ) VALUES (
                 %(nombre)s,
                 %(descripcion)s,
+                %(color)s,
                 NOW(),
                 NOW()
             );
@@ -88,12 +81,7 @@ class Estados:
     @classmethod
     def buscar_nombre(cls, nombre):
         query = """
-            SELECT
-                id_estado,
-                nombre,
-                descripcion,
-                created_at,
-                updated_at
+            SELECT id_estado, nombre, descripcion, color, created_at, updated_at
             FROM estados
             WHERE nombre = %(nombre)s;
         """
@@ -111,5 +99,8 @@ class Estados:
             es_valido = False
         if not datos["descripcion"]:
             flash("La descripción es obligatoria.", "danger")
+            es_valido = False
+        if not datos.get("color"):
+            flash("Debes elegir un color.", "danger")
             es_valido = False
         return es_valido

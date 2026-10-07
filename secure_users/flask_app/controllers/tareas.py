@@ -14,8 +14,50 @@ def tareas():
         flash("Debes iniciar sesión.", "danger")
         return redirect(url_for("inicio"))
 
-    tareas = Tareas.visualizar_todos()
-    return render_template("tareas.html", tareas=tareas)
+    usuario_id = session["id_usuario"]
+
+    # Filtros (GET)
+    buscar = request.args.get("buscar", "").strip().lower()
+    filtro_categoria = request.args.get("categoria_id", "").strip()
+    filtro_estado = request.args.get("estado_id", "").strip()
+
+    todas = Tareas.visualizar_todos()
+
+    # Filtrar solo las del usuario actual
+    todas = [t for t in todas if t.usuario_id == usuario_id]
+
+    if buscar:
+        todas = [t for t in todas if buscar in t.nombre.lower()]
+    if filtro_categoria:
+        todas = [t for t in todas if str(t.categoria_id) == filtro_categoria]
+    if filtro_estado:
+        todas = [t for t in todas if str(t.estado_id) == filtro_estado]
+
+    # Próximas tareas (top 5)
+    proximas = Tareas.proximas(usuario_id, 5)
+
+    # Resumen
+    conteo = Tareas.contar_por_estado(usuario_id)
+    resumen = {"total": 0, "pendientes": 0, "en_progreso": 0, "completadas": 0}
+    for fila in conteo:
+        resumen["total"] += fila["total"]
+        nombre = fila["estado"].lower()
+        if "pendiente" in nombre:
+            resumen["pendientes"] = fila["total"]
+        elif "progreso" in nombre:
+            resumen["en_progreso"] = fila["total"]
+        elif "complet" in nombre:
+            resumen["completadas"] = fila["total"]
+
+    return render_template(
+        "tareas.html",
+        tareas=todas,
+        categorias=Categorias.visualizar_todos(),
+        estados=Estados.visualizar_todos(),
+        proximas=proximas,
+        resumen=resumen,
+        filtros={"buscar": buscar, "categoria_id": filtro_categoria, "estado_id": filtro_estado}
+    )
 
 
 @app.route("/tareas/detalle/<int:id>")
@@ -30,12 +72,7 @@ def detalle_tarea(id):
         return redirect(url_for("tareas"))
 
     comentarios = Comentarios.buscar_por_tarea(id)
-
-    return render_template(
-        "tarea_detalle.html",
-        tarea=tarea,
-        comentarios=comentarios
-    )
+    return render_template("tarea_detalle.html", tarea=tarea, comentarios=comentarios)
 
 
 @app.route("/tareas/nueva")
@@ -61,12 +98,13 @@ def crear_tarea():
     usuario = Usuarios.buscar_id(session["id_usuario"])
     if not usuario:
         session.clear()
-        flash("Tu sesión ya no es válida. Inicia sesión de nuevo.", "danger")
+        flash("Tu sesión ya no es válida.", "danger")
         return redirect(url_for("inicio"))
 
     datos = {
         "nombre": request.form.get("nombre", "").strip(),
         "descripcion": request.form.get("descripcion", "").strip(),
+        "fecha_limite": request.form.get("fecha_limite", "").strip(),
         "categoria_id": request.form.get("categoria_id", "").strip(),
         "prioridad_id": request.form.get("prioridad_id", "").strip(),
         "estado_id": request.form.get("estado_id", "").strip(),
@@ -125,7 +163,7 @@ def modificar_tarea(id):
     usuario = Usuarios.buscar_id(session["id_usuario"])
     if not usuario:
         session.clear()
-        flash("Tu sesión no es válida. Inicia sesión de nuevo.", "danger")
+        flash("Tu sesión no es válida.", "danger")
         return redirect(url_for("inicio"))
 
     if tarea.usuario_id != usuario.id_usuario:
@@ -136,6 +174,7 @@ def modificar_tarea(id):
         "id_tarea": id,
         "nombre": request.form.get("nombre", "").strip(),
         "descripcion": request.form.get("descripcion", "").strip(),
+        "fecha_limite": request.form.get("fecha_limite", "").strip(),
         "categoria_id": request.form.get("categoria_id", "").strip(),
         "prioridad_id": request.form.get("prioridad_id", "").strip(),
         "estado_id": request.form.get("estado_id", "").strip(),
@@ -170,7 +209,7 @@ def tarea_eliminar(id):
     usuario = Usuarios.buscar_id(session["id_usuario"])
     if not usuario:
         session.clear()
-        flash("Tu sesión no es válida. Inicia sesión de nuevo.", "danger")
+        flash("Tu sesión no es válida.", "danger")
         return redirect(url_for("inicio"))
 
     if tarea.usuario_id != usuario.id_usuario:
@@ -180,3 +219,37 @@ def tarea_eliminar(id):
     Tareas.eliminar(id)
     flash("Tarea eliminada correctamente.", "success")
     return redirect(url_for("tareas"))
+
+
+@app.route("/tareas/completar/<int:id>", methods=["POST"])
+def completar_tarea(id):
+    """Marca la tarea como completada cambiando su estado al estado 'Completada'."""
+    if "id_usuario" not in session:
+        flash("Inicia sesión.", "danger")
+        return redirect(url_for("inicio"))
+
+    tarea = Tareas.buscar_id(id)
+    if not tarea or tarea.usuario_id != session["id_usuario"]:
+        flash("No tienes permiso.", "danger")
+        return redirect(url_for("tareas"))
+
+    # Buscar el estado que contenga "complet"
+    estados = Estados.visualizar_todos()
+    estado_completado = next((e for e in estados if "complet" in e.nombre.lower()), None)
+    if not estado_completado:
+        flash("No existe un estado 'Completada'.", "danger")
+        return redirect(url_for("detalle_tarea", id=id))
+
+    datos = {
+        "id_tarea": id,
+        "nombre": tarea.nombre,
+        "descripcion": tarea.descripcion,
+        "fecha_limite": tarea.fecha_limite,
+        "categoria_id": tarea.categoria_id,
+        "prioridad_id": tarea.prioridad_id,
+        "estado_id": estado_completado.id_estado
+    }
+
+    Tareas.modificar(datos)
+    flash("Tarea marcada como completada.", "success")
+    return redirect(url_for("detalle_tarea", id=id))

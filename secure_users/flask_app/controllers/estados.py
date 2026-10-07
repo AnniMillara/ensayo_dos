@@ -20,7 +20,6 @@ def nuevo_estado():
     if "id_usuario" not in session:
         flash("Debes iniciar sesión.", "danger")
         return redirect(url_for("inicio"))
-
     return render_template("nuevo_estado.html")
 
 
@@ -33,20 +32,17 @@ def crear_estado():
     usuario = Usuarios.buscar_id(session["id_usuario"])
     if not usuario:
         session.clear()
-        flash("Tu sesión ya no es válida. Inicia sesión de nuevo.", "danger")
+        flash("Tu sesión ya no es válida.", "danger")
         return redirect(url_for("inicio"))
 
-    nombre = request.form.get("nombre", "").strip()
-    descripcion = request.form.get("descripcion", "").strip()
+    datos = {
+        "nombre": request.form.get("nombre", "").strip(),
+        "descripcion": request.form.get("descripcion", "").strip(),
+        "color": request.form.get("color", "#6b7280").strip()
+    }
 
-    if not nombre or not descripcion:
-        flash("Todos los campos son obligatorios.", "danger")
-        return render_template(
-            "nuevo_estado.html",
-            datos={"nombre": nombre, "descripcion": descripcion}
-        )
-
-    datos = {"nombre": nombre, "descripcion": descripcion}
+    if not Estados.validar_estado(datos):
+        return render_template("nuevo_estado.html", datos=datos)
 
     Estados.guardar(datos)
     flash("Estado guardado correctamente.", "success")
@@ -78,17 +74,15 @@ def modificar_estado(id):
         flash("El estado no existe.", "danger")
         return redirect(url_for("lista_estados"))
 
-    nombre = request.form.get("nombre", "").strip()
-    descripcion = request.form.get("descripcion", "").strip()
+    datos = {
+        "id_estado": id,
+        "nombre": request.form.get("nombre", "").strip(),
+        "descripcion": request.form.get("descripcion", "").strip(),
+        "color": request.form.get("color", "#6b7280").strip()
+    }
 
-    if not nombre or not descripcion:
-        flash("Todos los campos son obligatorios.", "danger")
-        return render_template(
-            "editar_estado.html",
-            estado={"id_estado": id, "nombre": nombre, "descripcion": descripcion}
-        )
-
-    datos = {"id_estado": id, "nombre": nombre, "descripcion": descripcion}
+    if not Estados.validar_estado(datos):
+        return render_template("editar_estado.html", estado=datos)
 
     Estados.modificar(datos)
     flash("Estado modificado correctamente.", "success")

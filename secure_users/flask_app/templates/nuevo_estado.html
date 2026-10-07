@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="card-bookhub">
+<div class="card-bookhub form-narrow">
     <form action="{{ url_for('crear_estado') }}" method="POST">
         <div class="mb-3">
             <label>Nombre</label>
@@ -18,6 +18,11 @@
             <label>Descripción</label>
             <textarea name="descripcion" class="form-control" rows="3"
                 required>{{ datos.descripcion if datos else '' }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label>Color</label>
+            <input type="color" name="color" class="form-control form-color"
+                value="{{ datos.color if datos else '#6b7280' }}">
         </div>
         <button type="submit" class="btn btn-dark">Guardar</button>
         <a href="{{ url_for('lista_estados') }}" class="btn btn-secondary">Cancelar</a>

@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="card-bookhub">
+<div class="card-bookhub form-narrow">
     <form action="{{ url_for('crear_tarea') }}" method="POST">
         <div class="mb-3">
             <label>Título</label>
@@ -50,6 +50,11 @@
                 </option>
                 {% endfor %}
             </select>
+        </div>
+        <div class="mb-3">
+            <label>Fecha límite</label>
+            <input type="date" name="fecha_limite" class="form-control"
+                value="{{ datos.fecha_limite if datos else '' }}" required>
         </div>
         <div class="mb-3">
             <label>Descripción</label>

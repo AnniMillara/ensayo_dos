@@ -10,13 +10,38 @@
     <a href="{{ url_for('nueva_tarea') }}" class="btn btn-dark">+ Nueva Tarea</a>
 </div>
 
+{# ---------- FILTROS ---------- #}
+<form method="GET" action="{{ url_for('tareas') }}" class="filter-bar">
+    <input type="text" name="buscar" class="form-control" placeholder="Buscar tarea..." value="{{ filtros.buscar }}">
+    <select name="categoria_id" class="form-select">
+        <option value="">Todas las categorías</option>
+        {% for c in categorias %}
+        <option value="{{ c.id_categoria }}" {% if filtros.categoria_id==c.id_categoria|string %}selected{% endif %}>
+            {{ c.nombre }}
+        </option>
+        {% endfor %}
+    </select>
+    <select name="estado_id" class="form-select">
+        <option value="">Todos los estados</option>
+        {% for e in estados %}
+        <option value="{{ e.id_estado }}" {% if filtros.estado_id==e.id_estado|string %}selected{% endif %}>
+            {{ e.nombre }}
+        </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn btn-dark">Filtrar</button>
+    <a href="{{ url_for('tareas') }}" class="btn btn-secondary">Limpiar</a>
+</form>
+
+{# ---------- TABLA PRINCIPAL ---------- #}
 {% if tareas %}
-<table class="table-bookhub">
+<table class="table-bookhub mt-4">
     <thead>
         <tr>
             <th>Título</th>
             <th>Categoría</th>
             <th>Prioridad</th>
+            <th>Fecha Límite</th>
             <th>Estado</th>
             <th>Acciones</th>
         </tr>
@@ -29,7 +54,13 @@
             </td>
             <td>{{ tarea.categoria_nombre }}</td>
             <td>{{ tarea.prioridad_nombre }}</td>
-            <td>{{ tarea.estado_nombre }}</td>
+            <td>{{ tarea.fecha_limite.strftime('%Y-%m-%d') if tarea.fecha_limite else '—' }}</td>
+            <td>
+                <span class="badge-estado"
+                    style="background: {{ tarea.estado_color }}22; color: {{ tarea.estado_color }}; border: 1px solid {{ tarea.estado_color }}55;">
+                    {{ tarea.estado_nombre }}
+                </span>
+            </td>
             <td>
                 <a href="{{ url_for('detalle_tarea', id=tarea.id_tarea) }}" class="btn btn-sm btn-info">Ver</a>
                 <a href="{{ url_for('editar_tarea', id=tarea.id_tarea) }}" class="btn btn-sm btn-dark">Editar</a>
@@ -43,9 +74,50 @@
     </tbody>
 </table>
 {% else %}
-<div class="card-bookhub text-center">
-    <p class="text-muted">Aún no hay tareas registradas.</p>
-    <a href="{{ url_for('nueva_tarea') }}" class="btn btn-dark">Crear la primera</a>
+<div class="card-bookhub text-center mt-4">
+    <p class="text-muted">No hay tareas que coincidan con los filtros.</p>
+    <a href="{{ url_for('nueva_tarea') }}" class="btn btn-dark">Crear una tarea</a>
 </div>
 {% endif %}
+
+{# ---------- BLOQUES INFERIORES ---------- #}
+<div class="two-columns mt-5">
+
+    {# Próximas tareas #}
+    <div class="card-bookhub">
+        <h3>Próximas tareas</h3>
+        {% if proximas %}
+        <table class="table-bookhub">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Fecha Límite</th>
+                    <th>Días restantes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in proximas %}
+                <tr>
+                    <td><a href="{{ url_for('detalle_tarea', id=p.id_tarea) }}">{{ p.nombre }}</a></td>
+                    <td>{{ p.fecha_limite.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ p.dias_restantes }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted">No tienes tareas próximas.</p>
+        {% endif %}
+    </div>
+
+    {# Resumen #}
+    <div class="card-bookhub">
+        <h3>Resumen</h3>
+        <p><strong>Total de tareas:</strong> {{ resumen.total }}</p>
+        <p><strong>Pendientes:</strong> {{ resumen.pendientes }}</p>
+        <p><strong>En progreso:</strong> {{ resumen.en_progreso }}</p>
+        <p><strong>Completadas:</strong> {{ resumen.completadas }}</p>
+    </div>
+
+</div>
 {% endblock %}

@@ -8,7 +8,7 @@
     </div>
 </div>
 
-<div class="card-bookhub">
+<div class="card-bookhub form-narrow">
     <form action="{{ url_for('modificar_estado', id=estado.id_estado) }}" method="POST">
         <div class="mb-3">
             <label>Nombre</label>
@@ -17,6 +17,10 @@
         <div class="mb-3">
             <label>Descripción</label>
             <textarea name="descripcion" class="form-control" rows="3" required>{{ estado.descripcion }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label>Color</label>
+            <input type="color" name="color" class="form-control form-color" value="{{ estado.color }}">
         </div>
         <button type="submit" class="btn btn-dark">Actualizar</button>
         <a href="{{ url_for('lista_estados') }}" class="btn btn-secondary">Cancelar</a>

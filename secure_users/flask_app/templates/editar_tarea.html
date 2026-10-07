@@ -9,7 +9,7 @@
     </div>
 </div>
 
-<div class="card-bookhub">
+<div class="card-bookhub form-narrow">
     <form action="{{ url_for('modificar_tarea', id=tarea.id_tarea) }}" method="POST">
         <div class="mb-3">
             <label>Título</label>
@@ -19,8 +19,8 @@
             <label>Categoría</label>
             <select name="categoria_id" class="form-select" required>
                 {% for c in categorias %}
-                <option value="{{ c.id_categoria }}"
-                        {% if tarea.categoria_id|string == c.id_categoria|string %}selected{% endif %}>
+                <option value="{{ c.id_categoria }}" {% if tarea.categoria_id|string==c.id_categoria|string %}selected{%
+                    endif %}>
                     {{ c.nombre }}
                 </option>
                 {% endfor %}
@@ -30,8 +30,8 @@
             <label>Prioridad</label>
             <select name="prioridad_id" class="form-select" required>
                 {% for p in prioridades %}
-                <option value="{{ p.id_prioridad }}"
-                        {% if tarea.prioridad_id|string == p.id_prioridad|string %}selected{% endif %}>
+                <option value="{{ p.id_prioridad }}" {% if tarea.prioridad_id|string==p.id_prioridad|string %}selected{%
+                    endif %}>
                     {{ p.nombre }}
                 </option>
                 {% endfor %}
@@ -41,12 +41,17 @@
             <label>Estado</label>
             <select name="estado_id" class="form-select" required>
                 {% for e in estados %}
-                <option value="{{ e.id_estado }}"
-                        {% if tarea.estado_id|string == e.id_estado|string %}selected{% endif %}>
+                <option value="{{ e.id_estado }}" {% if tarea.estado_id|string==e.id_estado|string %}selected{% endif
+                    %}>
                     {{ e.nombre }}
                 </option>
                 {% endfor %}
             </select>
+        </div>
+        <div class="mb-3">
+            <label>Fecha límite</label>
+            <input type="date" name="fecha_limite" class="form-control"
+                value="{{ tarea.fecha_limite.strftime('%Y-%m-%d') if tarea.fecha_limite else '' }}" required>
         </div>
         <div class="mb-3">
             <label>Descripción</label>
