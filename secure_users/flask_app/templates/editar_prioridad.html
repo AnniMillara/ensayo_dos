@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}TaskTrack - Editar Prioridad{% endblock %}
+
+{% block content %}
+<div class="page-header"><div><h2>Editar Prioridad</h2></div></div>
+
+<div class="card-bookhub">
+    <form action="{{ url_for('modificar_prioridad', id=prioridad.id_prioridad) }}" method="POST">
+        <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" name="nombre" class="form-control" value="{{ prioridad.nombre }}" required>
+        </div>
+        <div class="mb-3">
+            <label>Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="3" required>{{ prioridad.descripcion }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Actualizar</button>
+        <a href="{{ url_for('lista_prioridades') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

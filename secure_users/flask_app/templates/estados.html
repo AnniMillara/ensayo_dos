@@ -1,33 +1,44 @@
 {% extends "base.html" %}
-
 {% block title %}TaskTrack - Estados{% endblock %}
 
 {% block content %}
-
 <div class="page-header">
     <div>
         <h2>Estados</h2>
-        <p>Estados de tareas disponibles.</p>
+        <p>Administra los estados de tus tareas.</p>
     </div>
+    <a href="{{ url_for('nuevo_estado') }}" class="btn btn-dark">+ Nuevo Estado</a>
 </div>
 
-<div class="card-bookhub mb-4">
-    <h3 style="margin-top:0; font-size: 1.05rem;">Agregar Estado</h3>
-    <form action="{{ url_for('nuevo_estado') }}" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
-        <input type="text" name="nombre" class="form-control" placeholder="Nombre del estado" required style="flex:1; min-width:200px;">
-        <button type="submit" class="btn btn-dark">+ Agregar</button>
-    </form>
+{% if estados %}
+<table class="table-bookhub">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for e in estados %}
+        <tr>
+            <td>{{ e.nombre }}</td>
+            <td>{{ e.descripcion }}</td>
+            <td>
+                <a href="{{ url_for('editar_estado', id=e.id_estado) }}" class="btn btn-sm btn-dark">Editar</a>
+                <form action="{{ url_for('estado_eliminar', id=e.id_estado) }}" method="POST" style="display:inline;"
+                    onsubmit="return confirm('¿Eliminar este estado?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Borrar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="card-bookhub text-center">
+    <p class="text-muted">No hay estados registrados todavía.</p>
+    <a href="{{ url_for('nuevo_estado') }}" class="btn btn-dark">Crear el primero</a>
 </div>
-
-<div class="list-grid">
-    {% for estado in lista_estado %}
-    <div class="list-card">
-        <span class="name">{{ estado.nombre }}</span>
-        <div class="actions">
-            <a href="{{ url_for('eliminar_estado', id=estado.id_estado) }}" class="btn btn-sm btn-danger">Borrar</a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
+{% endif %}
 {% endblock %}

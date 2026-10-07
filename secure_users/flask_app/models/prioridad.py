@@ -1,6 +1,7 @@
 from flask import flash
 from flask_app.config.mysqlconnection import connectToMySQL
 
+
 class Prioridades:
     def __init__(self, data):
         self.id_prioridad = data["id_prioridad"]
@@ -12,7 +13,7 @@ class Prioridades:
     @classmethod
     def visualizar_todos(cls):
         query = """
-            SELECT 
+            SELECT
                 id_prioridad,
                 nombre,
                 descripcion,
@@ -22,17 +23,15 @@ class Prioridades:
             ORDER BY id_prioridad;
         """
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-
         prioridades = []
         for prioridad in resultados:
             prioridades.append(cls(prioridad))
-
         return prioridades
 
     @classmethod
     def buscar_id(cls, id):
         query = """
-            SELECT 
+            SELECT
                 id_prioridad,
                 nombre,
                 descripcion,
@@ -102,3 +101,14 @@ class Prioridades:
         if resultado:
             return cls(resultado[0])
         return None
+
+    @staticmethod
+    def validar_prioridad(datos):
+        es_valido = True
+        if not datos["nombre"] or len(datos["nombre"]) < 3:
+            flash("El nombre debe tener al menos 3 caracteres.", "danger")
+            es_valido = False
+        if not datos["descripcion"]:
+            flash("La descripción es obligatoria.", "danger")
+            es_valido = False
+        return es_valido

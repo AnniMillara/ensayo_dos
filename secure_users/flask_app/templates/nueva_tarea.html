@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}TaskTrack - Nueva Tarea{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Nueva Tarea</h2>
+        <p>Completa los datos para crear una tarea.</p>
+    </div>
+</div>
+
+<div class="card-bookhub">
+    <form action="{{ url_for('crear_tarea') }}" method="POST">
+        <div class="mb-3">
+            <label>Título</label>
+            <input type="text" name="nombre" class="form-control" value="{{ datos.nombre if datos else '' }}" required>
+        </div>
+        <div class="mb-3">
+            <label>Categoría</label>
+            <select name="categoria_id" class="form-select" required>
+                <option value="">Selecciona una categoría</option>
+                {% for c in categorias %}
+                <option value="{{ c.id_categoria }}" {% if datos and datos.categoria_id|string==c.id_categoria|string
+                    %}selected{% endif %}>
+                    {{ c.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Prioridad</label>
+            <select name="prioridad_id" class="form-select" required>
+                <option value="">Selecciona una prioridad</option>
+                {% for p in prioridades %}
+                <option value="{{ p.id_prioridad }}" {% if datos and datos.prioridad_id|string==p.id_prioridad|string
+                    %}selected{% endif %}>
+                    {{ p.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Estado</label>
+            <select name="estado_id" class="form-select" required>
+                <option value="">Selecciona un estado</option>
+                {% for e in estados %}
+                <option value="{{ e.id_estado }}" {% if datos and datos.estado_id|string==e.id_estado|string
+                    %}selected{% endif %}>
+                    {{ e.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label>Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="4"
+                required>{{ datos.descripcion if datos else '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Guardar</button>
+        <a href="{{ url_for('tareas') }}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

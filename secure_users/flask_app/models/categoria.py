@@ -102,3 +102,14 @@ class Categorias:
         if resultado:
             return cls(resultado[0])
         return None
+
+    @staticmethod
+    def validar_categoria(datos):
+        es_valido = True
+        if not datos["nombre"] or len(datos["nombre"]) < 3:
+            flash("El nombre debe tener al menos 3 caracteres.", "danger")
+            es_valido = False
+        if not datos["descripcion"]:
+            flash("La descripción es obligatoria.", "danger")
+            es_valido = False
+        return es_valido

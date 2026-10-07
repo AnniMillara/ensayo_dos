@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}TaskTrack - Mis Tareas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Mis Tareas</h2>
+        <p>Lista de todas tus tareas registradas.</p>
+    </div>
+    <a href="{{ url_for('nueva_tarea') }}" class="btn btn-dark">+ Nueva Tarea</a>
+</div>
+
+{% if tareas %}
+<table class="table-bookhub">
+    <thead>
+        <tr>
+            <th>Título</th>
+            <th>Categoría</th>
+            <th>Prioridad</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tarea in tareas %}
+        <tr>
+            <td>
+                <a href="{{ url_for('detalle_tarea', id=tarea.id_tarea) }}">{{ tarea.nombre }}</a>
+            </td>
+            <td>{{ tarea.categoria_nombre }}</td>
+            <td>{{ tarea.prioridad_nombre }}</td>
+            <td>{{ tarea.estado_nombre }}</td>
+            <td>
+                <a href="{{ url_for('detalle_tarea', id=tarea.id_tarea) }}" class="btn btn-sm btn-info">Ver</a>
+                <a href="{{ url_for('editar_tarea', id=tarea.id_tarea) }}" class="btn btn-sm btn-dark">Editar</a>
+                <form action="{{ url_for('tarea_eliminar', id=tarea.id_tarea) }}" method="POST" style="display:inline;"
+                    onsubmit="return confirm('¿Eliminar esta tarea?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Borrar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="card-bookhub text-center">
+    <p class="text-muted">Aún no hay tareas registradas.</p>
+    <a href="{{ url_for('nueva_tarea') }}" class="btn btn-dark">Crear la primera</a>
+</div>
+{% endif %}
+{% endblock %}

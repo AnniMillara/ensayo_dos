@@ -13,26 +13,24 @@
 </head>
 
 <body>
-
     <div class="container" style="padding: 24px 16px;">
 
-        {# ---------- NAVBAR ---------- #}
         {% if session.get('id_usuario') %}
         <nav class="navbar-bookhub">
-            <a href="{{ url_for('tareas') }}" class="brand"><i class="fa fa-check-square-o" aria-hidden="true"></i>
-                TaskTrack</a>
+            <a href="{{ url_for('tareas') }}" class="brand">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i> TaskTrack
+            </a>
             <div class="nav-links">
                 <a href="{{ url_for('tareas') }}">Mis Tareas</a>
                 <a href="{{ url_for('lista_categorias') }}">Categorías</a>
-                <a href="{{ url_for('lista_estado') }}">Estados</a>
-                <a href="{{ url_for('lista_prioridad') }}">Prioridades</a>
+                <a href="{{ url_for('lista_estados') }}">Estados</a>
+                <a href="{{ url_for('lista_prioridades') }}">Prioridades</a>
                 <a href="{{ url_for('ruta_perfil', id=session['id_usuario']) }}">Mi Perfil</a>
                 <a href="{{ url_for('logout') }}">Cerrar Sesión</a>
             </div>
         </nav>
         {% endif %}
 
-        {# ---------- FLASHES ---------- #}
         {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
         {% for category, message in messages %}
@@ -41,11 +39,8 @@
         {% endif %}
         {% endwith %}
 
-        {# ---------- CONTENIDO ---------- #}
         {% block content %}{% endblock %}
-
     </div>
-
 </body>
 
 </html>

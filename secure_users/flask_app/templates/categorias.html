@@ -1,20 +1,43 @@
 {% extends "base.html" %}
-
-{% block title %}TaskTrack - Categorias{% endblock %}
+{% block title %}TaskTrack - Categorías{% endblock %}
 
 {% block content %}
+<div class="page-header">
+    <div>
+        <h2>Categorías</h2>
+        <p>Administra las categorías de tus tareas.</p>
+    </div>
+    <a href="{{ url_for('nueva_categoria') }}" class="btn btn-dark">+ Nueva Categoría</a>
+</div>
 
-{% if lista_categorias %}
-<table>
-    <th>
-    <td>Nombre</td>
-    <td>Descripción</td>
-    </th>
-    {% for categoria in lista_categorias %}
-    <td>{{ categoria.nombre }}</td>
-    <td>{{ categoria.descripcion }}</td>
-    {% endfor %}
+{% if categorias %}
+<table class="table-bookhub">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for categoria in categorias %}
+        <tr>
+            <td>{{ categoria.nombre }}</td>
+            <td>{{ categoria.descripcion }}</td>
+            <td>
+                <a href="{{ url_for('editar_categoria', id=categoria.id_categoria) }}" class="btn btn-sm btn-dark">Editar</a>
+                <form action="{{ url_for('categoria_eliminar', id=categoria.id_categoria) }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar esta categoría?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Borrar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
 {% else %}
-<div>Uy, parece que no hay categorias registradas :(, ¡Ingresa una!</div>
+<div class="card-bookhub text-center">
+    <p class="text-muted">No hay categorías registradas todavía.</p>
+    <a href="{{ url_for('nueva_categoria') }}" class="btn btn-dark">Crear la primera</a>
+</div>
+{% endif %}
 {% endblock %}

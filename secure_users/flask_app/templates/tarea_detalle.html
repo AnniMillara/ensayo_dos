@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}TaskTrack - Detalle de Tarea{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>{{ tarea.nombre }}</h2>
+        <p>Información completa de la tarea.</p>
+    </div>
+</div>
+
+<div class="card-bookhub mb-4">
+    <p><strong>Categoría:</strong> {{ tarea.categoria_nombre }}</p>
+    <p><strong>Prioridad:</strong> {{ tarea.prioridad_nombre }}</p>
+    <p><strong>Estado:</strong> {{ tarea.estado_nombre }}</p>
+    <p><strong>Creada:</strong> {{ tarea.created_at.strftime('%Y-%m-%d') }}</p>
+    <p><strong>Descripción:</strong></p>
+    <p>{{ tarea.descripcion }}</p>
+</div>
+
+<div class="card-bookhub">
+    <h3 style="margin-top:0;">Comentarios ({{ comentarios|length }})</h3>
+
+    {% if comentarios %}
+        {% for c in comentarios %}
+        <div style="border-bottom:1px solid #eee; padding:10px 0;">
+            <p style="margin:0;"><strong>Usuario #{{ c.usuario_id }}</strong></p>
+            <p style="margin:4px 0;">{{ c.contenido }}</p>
+            <small class="text-muted">{{ c.created_at.strftime('%Y-%m-%d %H:%M') }}</small>
+
+            {% if c.usuario_id == session['id_usuario'] %}
+            <form action="{{ url_for('eliminar_comentario', id=c.id_comentario) }}" method="POST" style="display:inline;">
+                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('¿Eliminar comentario?');">Eliminar</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <p class="text-muted">Aún no hay comentarios. ¡Sé el primero!</p>
+    {% endif %}
+
+    <form action="{{ url_for('crear_comentario', tarea_id=tarea.id_tarea) }}" method="POST" class="mt-3">
+        <div class="mb-3">
+            <textarea name="contenido" class="form-control" rows="2" placeholder="Escribe un comentario..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-dark">Comentar</button>
+    </form>
+</div>
+
+<div class="mt-4">
+    <a href="{{ url_for('tareas') }}" class="btn btn-secondary">← Volver a Mis Tareas</a>
+</div>
+{% endblock %}

@@ -1,33 +1,44 @@
 {% extends "base.html" %}
-
 {% block title %}TaskTrack - Prioridades{% endblock %}
 
 {% block content %}
-
 <div class="page-header">
     <div>
         <h2>Prioridades</h2>
-        <p>Prioridades de tareas disponibles.</p>
+        <p>Administra las prioridades de tus tareas.</p>
     </div>
+    <a href="{{ url_for('nueva_prioridad') }}" class="btn btn-dark">+ Nueva Prioridad</a>
 </div>
 
-<div class="card-bookhub mb-4">
-    <h3 style="margin-top:0; font-size: 1.05rem;">Agregar Prioridad</h3>
-    <form action="{{ url_for('nueva_prioridad') }}" method="POST" style="display:flex; gap:10px; flex-wrap:wrap;">
-        <input type="text" name="nombre" class="form-control" placeholder="Nombre de la prioridad" required style="flex:1; min-width:200px;">
-        <button type="submit" class="btn btn-dark">+ Agregar</button>
-    </form>
+{% if prioridades %}
+<table class="table-bookhub">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in prioridades %}
+        <tr>
+            <td>{{ p.nombre }}</td>
+            <td>{{ p.descripcion }}</td>
+            <td>
+                <a href="{{ url_for('editar_prioridad', id=p.id_prioridad) }}" class="btn btn-sm btn-dark">Editar</a>
+                <form action="{{ url_for('prioridad_eliminar', id=p.id_prioridad) }}" method="POST"
+                    style="display:inline;" onsubmit="return confirm('¿Eliminar esta prioridad?');">
+                    <button type="submit" class="btn btn-sm btn-danger">Borrar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<div class="card-bookhub text-center">
+    <p class="text-muted">No hay prioridades registradas todavía.</p>
+    <a href="{{ url_for('nueva_prioridad') }}" class="btn btn-dark">Crear la primera</a>
 </div>
-
-<div class="list-grid">
-    {% for prioridad in lista_prioridad %}
-    <div class="list-card">
-        <span class="name">{{ prioridad.nombre }}</span>
-        <div class="actions">
-            <a href="{{ url_for('eliminar_prioridad', id=prioridad.id_prioridad) }}" class="btn btn-sm btn-danger">Borrar</a>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
+{% endif %}
 {% endblock %}

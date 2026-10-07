@@ -1,16 +1,13 @@
 {% extends "base.html" %}
-
 {% block title %}TaskTrack - Login / Registro{% endblock %}
 
 {% block content %}
 <div class="login-header">
-    <h1><i class="fa fa-check-square-o" aria-hidden="true"></i>
-        TaskTrack</h1>
-    <p>Tus tareas desde un lugar crecano!!</p>
+    <h1><i class="fa fa-check-square-o" aria-hidden="true"></i> TaskTrack</h1>
+    <p>Tus tareas desde un lugar cercano!!</p>
 </div>
 
 <div class="grid-2">
-    <!-- Crear Cuenta -->
     <div class="login-card">
         <h3>Crear Cuenta</h3>
         <form action="{{ url_for('registro') }}" method="POST">
@@ -38,7 +35,6 @@
         </form>
     </div>
 
-    <!-- Iniciar Sesión -->
     <div class="login-card">
         <h3>Iniciar Sesión</h3>
         <form action="{{ url_for('login') }}" method="POST">

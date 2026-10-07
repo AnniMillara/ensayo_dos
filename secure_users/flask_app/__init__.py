@@ -1,11 +1,18 @@
 from flask import Flask
 from flask_bcrypt import Bcrypt
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("ClaveMuySegura", "clave_por_defecto_larga_y_unica_1234567890")
 
+# Clave secreta para las sesiones (cámbiala por algo más seguro en producción)
+app.secret_key = "tasktrack_clave_secreta_2026"
+
+# Bcrypt para hashear contraseñas
 bcrypt = Bcrypt(app)
+
+# Importar los controladores DESPUÉS de crear app y bcrypt
+from flask_app.controllers import usuarios
+from flask_app.controllers import tareas
+from flask_app.controllers import categorias
+from flask_app.controllers import prioridades
+from flask_app.controllers import estados
+from flask_app.controllers import comentarios

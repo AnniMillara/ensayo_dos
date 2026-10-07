@@ -13,22 +13,25 @@ class Tareas:
         self.usuario_id = data["usuario_id"]
         self.created_at = data["created_at"]
         self.updated_at = data["updated_at"]
+        # Campos que vienen de los JOINs (pueden ser None si no hay join)
+        self.categoria_nombre = data.get("categoria_nombre")
+        self.prioridad_nombre = data.get("prioridad_nombre")
+        self.estado_nombre = data.get("estado_nombre")
 
     @classmethod
     def visualizar_todos(cls):
         query = """
-            SELECT 
-                id_tarea,
-                nombre,
-                descripcion,
-                categoria_id,
-                prioridad_id,
-                estado_id,
-                usuario_id,
-                created_at,
-                updated_at
-            FROM tareas
-            ORDER BY id_tarea;
+            SELECT
+                t.id_tarea, t.nombre, t.descripcion,
+                t.categoria_id, c.nombre AS categoria_nombre,
+                t.prioridad_id, p.nombre AS prioridad_nombre,
+                t.estado_id, e.nombre AS estado_nombre,
+                t.usuario_id, t.created_at, t.updated_at
+            FROM tareas t
+            JOIN categorias c ON t.categoria_id = c.id_categoria
+            JOIN prioridades p ON t.prioridad_id = p.id_prioridad
+            JOIN estados e ON t.estado_id = e.id_estado
+            ORDER BY t.id_tarea;
         """
         resultados = connectToMySQL('esquema_tareas').query_db(query)
         tareas = []
@@ -39,18 +42,17 @@ class Tareas:
     @classmethod
     def buscar_id(cls, id):
         query = """
-            SELECT 
-                id_tarea,
-                nombre,
-                descripcion,
-                categoria_id,
-                prioridad_id,
-                estado_id,
-                usuario_id,
-                created_at,
-                updated_at
-            FROM tareas
-            WHERE id_tarea = %(id_tarea)s;
+            SELECT
+                t.id_tarea, t.nombre, t.descripcion,
+                t.categoria_id, c.nombre AS categoria_nombre,
+                t.prioridad_id, p.nombre AS prioridad_nombre,
+                t.estado_id, e.nombre AS estado_nombre,
+                t.usuario_id, t.created_at, t.updated_at
+            FROM tareas t
+            JOIN categorias c ON t.categoria_id = c.id_categoria
+            JOIN prioridades p ON t.prioridad_id = p.id_prioridad
+            JOIN estados e ON t.estado_id = e.id_estado
+            WHERE t.id_tarea = %(id_tarea)s;
         """
         data = {"id_tarea": id}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
@@ -111,15 +113,9 @@ class Tareas:
     def buscar_nombre(cls, nombre):
         query = """
             SELECT
-                id_tarea,
-                nombre,
-                descripcion,
-                categoria_id,
-                prioridad_id,
-                estado_id,
-                usuario_id,
-                created_at,
-                updated_at
+                id_tarea, nombre, descripcion,
+                categoria_id, prioridad_id, estado_id, usuario_id,
+                created_at, updated_at
             FROM tareas
             WHERE nombre = %(nombre)s;
         """
@@ -131,18 +127,12 @@ class Tareas:
 
     @classmethod
     def _buscar_por_campo(cls, campo, valor):
-        """Método auxiliar para búsquedas por FK."""
+        """Método auxiliar para búsquedas por FK (devuelve LISTA)."""
         query = f"""
             SELECT
-                id_tarea,
-                nombre,
-                descripcion,
-                categoria_id,
-                prioridad_id,
-                estado_id,
-                usuario_id,
-                created_at,
-                updated_at
+                id_tarea, nombre, descripcion,
+                categoria_id, prioridad_id, estado_id, usuario_id,
+                created_at, updated_at
             FROM tareas
             WHERE {campo} = %({campo})s;
         """
