@@ -3,8 +3,9 @@ from flask import flash
 from flask_app.config.mysqlconnection import connectToMySQL
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
-NOMBRE_REGEX = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$')          
-PASSWORD_REGEX = re.compile(r'^(?=.*[A-Z])(?=.*\d).{8,}$')     
+NOMBRE_REGEX = re.compile(r'^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]+$')
+PASSWORD_REGEX = re.compile(r'^(?=.*[A-Z])(?=.*\d).{8,}$')
+
 
 class Usuarios:
     def __init__(self, data):
@@ -15,9 +16,9 @@ class Usuarios:
         self.contrasena = data["contrasena"]
         self.created_at = data["created_at"]
         self.updated_at = data["updated_at"]
-    
+
     @classmethod
-    def vizualizar_todos(cls):
+    def visualizar_todos(cls):
         query = """
             SELECT 
                 id_usuario,
@@ -30,15 +31,12 @@ class Usuarios:
             FROM usuarios
             ORDER BY id_usuario;
         """
-        
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-        
         usuarios = []
         for usuario in resultados:
             usuarios.append(cls(usuario))
-        
         return usuarios
-    
+
     @classmethod
     def buscar_id(cls, id):
         query = """
@@ -53,15 +51,12 @@ class Usuarios:
             FROM usuarios
             WHERE id_usuario = %(id_usuario)s;
         """
-        
-        data = {
-            "id_usuario" : id
-        }
+        data = {"id_usuario": id}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
         return None
-    
+
     @classmethod
     def modificar(cls, data):
         query = """
@@ -74,21 +69,17 @@ class Usuarios:
                 updated_at = NOW()
             WHERE id_usuario = %(id_usuario)s;
         """
-        
         return connectToMySQL('esquema_tareas').query_db(query, data)
-    
+
     @classmethod
     def eliminar(cls, id):
         query = """
             DELETE FROM usuarios
             WHERE id_usuario = %(id_usuario)s;
         """
-    
-        data = {
-            "id_usuario": id
-        }
+        data = {"id_usuario": id}
         return connectToMySQL("esquema_tareas").query_db(query, data)
-    
+
     @classmethod
     def guardar(cls, data):
         query = """
@@ -108,9 +99,8 @@ class Usuarios:
                 NOW()
             );
         """
-        
         return connectToMySQL("esquema_tareas").query_db(query, data)
-    
+
     @classmethod
     def buscar_email(cls, email):
         query = """
@@ -125,14 +115,12 @@ class Usuarios:
             FROM usuarios
             WHERE email = %(email)s;
         """
-        data = {
-            "email": email
-        }
+        data = {"email": email}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
         return None
-    
+
     @staticmethod
     def validar_usuario(datos, id_usuario=None):
         es_valido = True

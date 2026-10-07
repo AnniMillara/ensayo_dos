@@ -1,5 +1,6 @@
 from flask import flash
-from flask_app.config.mysqlconnection import connectToMySQL   
+from flask_app.config.mysqlconnection import connectToMySQL
+
 
 class Tareas:
     def __init__(self, data):
@@ -14,7 +15,7 @@ class Tareas:
         self.updated_at = data["updated_at"]
 
     @classmethod
-    def vizualizar_todos(cls):
+    def visualizar_todos(cls):
         query = """
             SELECT 
                 id_tarea,
@@ -22,20 +23,17 @@ class Tareas:
                 descripcion,
                 categoria_id,
                 prioridad_id,
-                categoria_id,
+                estado_id,
                 usuario_id,
                 created_at,
                 updated_at
-            FROM usuarios
+            FROM tareas
             ORDER BY id_tarea;
         """
-        
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-        
         tareas = []
         for tarea in resultados:
             tareas.append(cls(tarea))
-        
         return tareas
 
     @classmethod
@@ -51,13 +49,10 @@ class Tareas:
                 usuario_id,
                 created_at,
                 updated_at
-            FROM usuarios
+            FROM tareas
             WHERE id_tarea = %(id_tarea)s;
         """
-        
-        data = {
-            "id_tarea" : id
-        }
+        data = {"id_tarea": id}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
@@ -73,11 +68,9 @@ class Tareas:
                 categoria_id = %(categoria_id)s,
                 prioridad_id = %(prioridad_id)s,
                 estado_id = %(estado_id)s,
-                usuario_id = %(usuario_id)s,
                 updated_at = NOW()
             WHERE id_tarea = %(id_tarea)s;
         """
-        
         return connectToMySQL('esquema_tareas').query_db(query, data)
 
     @classmethod
@@ -86,10 +79,7 @@ class Tareas:
             DELETE FROM tareas
             WHERE id_tarea = %(id_tarea)s;
         """
-        
-        data = {
-            "id_tarea": id
-        }
+        data = {"id_tarea": id}
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
@@ -115,7 +105,6 @@ class Tareas:
                 NOW()
             );
         """
-
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
@@ -134,10 +123,73 @@ class Tareas:
             FROM tareas
             WHERE nombre = %(nombre)s;
         """
-        data = {
-            "nombre": nombre
-        }
+        data = {"nombre": nombre}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
         return None
+
+    @classmethod
+    def _buscar_por_campo(cls, campo, valor):
+        """Método auxiliar para búsquedas por FK."""
+        query = f"""
+            SELECT
+                id_tarea,
+                nombre,
+                descripcion,
+                categoria_id,
+                prioridad_id,
+                estado_id,
+                usuario_id,
+                created_at,
+                updated_at
+            FROM tareas
+            WHERE {campo} = %({campo})s;
+        """
+        data = {campo: valor}
+        resultados = connectToMySQL('esquema_tareas').query_db(query, data)
+        tareas = []
+        for tarea in resultados:
+            tareas.append(cls(tarea))
+        return tareas
+
+    @classmethod
+    def buscar_categoria(cls, id):
+        return cls._buscar_por_campo("categoria_id", id)
+
+    @classmethod
+    def buscar_estado(cls, id):
+        return cls._buscar_por_campo("estado_id", id)
+
+    @classmethod
+    def buscar_prioridad(cls, id):
+        return cls._buscar_por_campo("prioridad_id", id)
+
+    @staticmethod
+    def validar_tarea(datos):
+        es_valido = True
+
+        if not datos["nombre"]:
+            flash("El nombre es obligatorio.", "danger")
+            es_valido = False
+        elif len(datos["nombre"]) < 3:
+            flash("El nombre debe tener al menos 3 caracteres.", "danger")
+            es_valido = False
+
+        if not datos["descripcion"]:
+            flash("La descripción es obligatoria.", "danger")
+            es_valido = False
+
+        if not datos["categoria_id"]:
+            flash("Debes seleccionar una categoría.", "danger")
+            es_valido = False
+
+        if not datos["prioridad_id"]:
+            flash("Debes seleccionar una prioridad.", "danger")
+            es_valido = False
+
+        if not datos["estado_id"]:
+            flash("Debes seleccionar un estado.", "danger")
+            es_valido = False
+
+        return es_valido

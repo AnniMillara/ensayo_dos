@@ -1,16 +1,16 @@
 from flask import flash
-from flask_app.config.mysqlconnection import connectToMySQL   
+from flask_app.config.mysqlconnection import connectToMySQL
 
 class Prioridades:
     def __init__(self, data):
-        self.id_prioridad = data["id_tarea"]
+        self.id_prioridad = data["id_prioridad"]
         self.nombre = data["nombre"]
         self.descripcion = data["descripcion"]
         self.created_at = data["created_at"]
         self.updated_at = data["updated_at"]
 
     @classmethod
-    def vizualizar_todos(cls):
+    def visualizar_todos(cls):
         query = """
             SELECT 
                 id_prioridad,
@@ -21,13 +21,12 @@ class Prioridades:
             FROM prioridades
             ORDER BY id_prioridad;
         """
-        
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-        
+
         prioridades = []
         for prioridad in resultados:
             prioridades.append(cls(prioridad))
-        
+
         return prioridades
 
     @classmethod
@@ -42,10 +41,7 @@ class Prioridades:
             FROM prioridades
             WHERE id_prioridad = %(id_prioridad)s;
         """
-        
-        data = {
-            "id_prioridad" : id
-        }
+        data = {"id_prioridad": id}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
@@ -61,7 +57,6 @@ class Prioridades:
                 updated_at = NOW()
             WHERE id_prioridad = %(id_prioridad)s;
         """
-        
         return connectToMySQL('esquema_tareas').query_db(query, data)
 
     @classmethod
@@ -70,10 +65,7 @@ class Prioridades:
             DELETE FROM prioridades
             WHERE id_prioridad = %(id_prioridad)s;
         """
-        
-        data = {
-            "id_prioridad": id
-        }
+        data = {"id_prioridad": id}
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
@@ -91,7 +83,6 @@ class Prioridades:
                 NOW()
             );
         """
-
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
@@ -106,9 +97,7 @@ class Prioridades:
             FROM prioridades
             WHERE nombre = %(nombre)s;
         """
-        data = {
-            "nombre": nombre
-        }
+        data = {"nombre": nombre}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])

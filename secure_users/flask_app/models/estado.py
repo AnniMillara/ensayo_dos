@@ -1,51 +1,47 @@
 from flask import flash
-from flask_app.config.mysqlconnection import connectToMySQL   
+from flask_app.config.mysqlconnection import connectToMySQL
 
-class Categorias:
+class Estados:
     def __init__(self, data):
-        self.id_categoria = data["id_categoria"]
+        self.id_estado = data["id_estado"]
         self.nombre = data["nombre"]
         self.descripcion = data["descripcion"]
         self.created_at = data["created_at"]
         self.updated_at = data["updated_at"]
 
     @classmethod
-    def vizualizar_todos(cls):
+    def visualizar_todos(cls):
         query = """
             SELECT 
-                id_categoria,
+                id_estado,
                 nombre,
                 descripcion,
                 created_at,
                 updated_at
-            FROM categorias
-            ORDER BY id_categoria;
+            FROM estados
+            ORDER BY id_estado;
         """
-        
         resultados = connectToMySQL('esquema_tareas').query_db(query)
-        
-        categorias = []
-        for categoria in resultados:
-            categorias.append(cls(categoria))
-        
-        return categorias
+
+        estados = []
+        for estado in resultados:
+            estados.append(cls(estado))
+
+        return estados
 
     @classmethod
     def buscar_id(cls, id):
         query = """
             SELECT 
-                id_categoria,
+                id_estado,
                 nombre,
                 descripcion,
                 created_at,
                 updated_at
-            FROM categorias
-            WHERE id_categoria = %(id_categoria)s;
+            FROM estados
+            WHERE id_estado = %(id_estado)s;
         """
-        
-        data = {
-            "id_categoria" : id
-        }
+        data = {"id_estado": id}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
@@ -54,32 +50,28 @@ class Categorias:
     @classmethod
     def modificar(cls, data):
         query = """
-            UPDATE categorias
+            UPDATE estados
             SET
                 nombre = %(nombre)s,
                 descripcion = %(descripcion)s,
                 updated_at = NOW()
-            WHERE id_categoria = %(id_categoria)s;
+            WHERE id_estado = %(id_estado)s;
         """
-        
         return connectToMySQL('esquema_tareas').query_db(query, data)
 
     @classmethod
     def eliminar(cls, id):
         query = """
-            DELETE FROM categorias
-            WHERE id_categoria = %(id_prioridad)s;
+            DELETE FROM estados
+            WHERE id_estado = %(id_estado)s;
         """
-        
-        data = {
-            "id_categoria": id
-        }
+        data = {"id_estado": id}
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
     def guardar(cls, data):
         query = """
-            INSERT INTO categorias(
+            INSERT INTO estados(
                 nombre,
                 descripcion,
                 created_at,
@@ -91,24 +83,21 @@ class Categorias:
                 NOW()
             );
         """
-
         return connectToMySQL("esquema_tareas").query_db(query, data)
 
     @classmethod
     def buscar_nombre(cls, nombre):
         query = """
             SELECT
-                id_categoria,
+                id_estado,
                 nombre,
                 descripcion,
                 created_at,
                 updated_at
-            FROM prioridades
+            FROM estados
             WHERE nombre = %(nombre)s;
         """
-        data = {
-            "nombre": nombre
-        }
+        data = {"nombre": nombre}
         resultado = connectToMySQL('esquema_tareas').query_db(query, data)
         if resultado:
             return cls(resultado[0])
